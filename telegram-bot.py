@@ -11,10 +11,10 @@ logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s
 
 logger = logging.getLogger(__name__)
 
+
 # Define a few command handlers. These usually take the two arguments update and
 # context. Error handlers also receive the raised TelegramError object in error.
-
-
+######################## Commands ########################
 def start(update, context):
     """Send a message when the command /start is issued."""
     keyboard = [['/meme 😂'], ['/doge 🐶', '/cat 🐱'],
@@ -45,6 +45,7 @@ def error(update, context):
     logger.warning('Update "%s" caused error "%s"', update, context.error)
 
 
+######################## Random Dog Picture ########################
 def get_dog_url():
     """Get random dog url from json"""
     contents = requests.get('https://random.dog/woof.json').json()
@@ -70,6 +71,7 @@ def doge(update, context):
     context.bot.send_photo(chat_id=chat_id, photo=url)
 
 
+######################## Random Cat Picture ########################
 def get_cat_url():
     """Get random cat url from json"""
     # contents = requests.get(
@@ -101,17 +103,7 @@ def cat(update, context):
     context.bot.send_photo(chat_id=chat_id, photo=url)
 
 
-def get_cat_fact():
-    json = requests.get('https://catfact.ninja/fact').json()
-    fact = json['fact']
-    return fact
-
-
-def cat_fact(update, context):
-    fact = get_cat_fact()
-    context.bot.send_message(chat_id=update.effective_chat.id, text=fact)
-
-
+######################## Random Dog Fact ########################
 def get_dog_fact():
     json = requests.get('https://some-random-api.ml/facts/dog').json()
     fact = json['fact']
@@ -123,6 +115,19 @@ def dog_fact(update, context):
     context.bot.send_message(chat_id=update.effective_chat.id, text=fact)
 
 
+######################## Random Cat Fact ########################
+def get_cat_fact():
+    json = requests.get('https://catfact.ninja/fact').json()
+    fact = json['fact']
+    return fact
+
+
+def cat_fact(update, context):
+    fact = get_cat_fact()
+    context.bot.send_message(chat_id=update.effective_chat.id, text=fact)
+
+
+######################## Random Meme ########################
 def get_meme_contents():
     contents = requests.get('https://meme-api.herokuapp.com/gimme').json()
     return contents
@@ -137,6 +142,7 @@ def meme(update, context):
     context.bot.send_message(chat_id=update.effective_chat.id, text=caption)
 
 
+######################## Main ########################
 def main():
     """Start the bot."""
     # Create the Updater and pass it your bot's token.
@@ -172,5 +178,6 @@ def main():
     updater.idle()
 
 
+# Runs the main function on start
 if __name__ == '__main__':
     main()
