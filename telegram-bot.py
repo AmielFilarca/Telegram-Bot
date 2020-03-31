@@ -1,7 +1,8 @@
 import re
 import requests
 from telegram.ext.dispatcher import run_async
-from telegram.ext import Updater, InlineQueryHandler, CommandHandler, MessageHandler, Filters
+from telegram.ext import Updater, InlineQueryHandler, CommandHandler, MessageHandler, Filters, CallbackQueryHandler
+from telegram import ChatAction, InlineKeyboardButton, InlineKeyboardMarkup, ReplyKeyboardMarkup
 import logging
 
 # Enable logging
@@ -10,18 +11,26 @@ logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s
 
 logger = logging.getLogger(__name__)
 
-
 # Define a few command handlers. These usually take the two arguments update and
 # context. Error handlers also receive the raised TelegramError object in error.
+
+
 def start(update, context):
     """Send a message when the command /start is issued."""
+    keyboard = [['/doge', '/cat', '/help']]
+    reply_markup = ReplyKeyboardMarkup(
+        keyboard, resize_keyboard=True, selective=True)
     update.message.reply_text(
-        'Hi! I am Amiel\'s sexbot, type /doge or /cat for a surprise')
+        'Hi! I am Amiel\'s sex bot. \nFor more info, use /help.', reply_markup=reply_markup)
 
 
 def help(update, context):
     """Send a message when the command /help is issued."""
-    update.message.reply_text('Help!')
+    keyboard = [['/doge', '/cat', '/help']]
+    reply_markup = ReplyKeyboardMarkup(
+        keyboard, resize_keyboard=True, selective=True)
+    update.message.reply_text(
+        'Use /doge or /cat for a surprise.', reply_markup=reply_markup)
 
 
 def echo(update, context):
@@ -35,14 +44,14 @@ def error(update, context):
 
 
 def get_dog_url():
-    # Get random dog url from json
+    """Get random dog url from json"""
     contents = requests.get('https://random.dog/woof.json').json()
     url = contents['url']
     return url
 
 
 def get_dog_image_url():
-    # Get random dog image url
+    """Get random dog image url"""
     allowed_extension = ['jpg', 'jpeg', 'png']
     file_extension = ''
     while file_extension not in allowed_extension:
@@ -53,14 +62,14 @@ def get_dog_image_url():
 
 @run_async
 def doge(update, context):
-    # Send random dog image
+    """Send random dog image"""
     url = get_dog_image_url()
     chat_id = update.message.chat_id
     context.bot.send_photo(chat_id=chat_id, photo=url)
 
 
 def get_cat_url():
-    # Get random cat url from json
+    """Get random cat url from json"""
     contents = requests.get(
         'https://api.thecatapi.com/v1/images/search').json()
     contents = contents[0]
@@ -69,7 +78,7 @@ def get_cat_url():
 
 
 def get_cat_image_url():
-    # Get random cat image url
+    """Get random cat image url"""
     allowed_extension = ['jpg', 'jpeg', 'png']
     file_extension = ''
     while file_extension not in allowed_extension:
@@ -80,7 +89,7 @@ def get_cat_image_url():
 
 @run_async
 def cat(update, context):
-    # Send random cat image
+    """Send random cat image"""
     url = get_cat_image_url()
     chat_id = update.message.chat_id
     context.bot.send_photo(chat_id=chat_id, photo=url)
