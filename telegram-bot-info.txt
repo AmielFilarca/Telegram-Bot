@@ -1,6 +1,7 @@
 Commands
 start - Start bot
 meme - Random meme
+news - Latest news article
 doge - Random dog picture
 cat - Random cat picture
 dog_fact - Random dog fact
