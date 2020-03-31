@@ -17,7 +17,8 @@ logger = logging.getLogger(__name__)
 
 def start(update, context):
     """Send a message when the command /start is issued."""
-    keyboard = [['/doge', '/cat', '/help']]
+    keyboard = [['/meme 😂'], ['/doge 🐶', '/cat 🐱'],
+                ['/dog_fact 🐕', '/cat_fact 🐈'], ['/help ❓']]
     reply_markup = ReplyKeyboardMarkup(
         keyboard, resize_keyboard=True, selective=True)
     update.message.reply_text(
@@ -26,11 +27,12 @@ def start(update, context):
 
 def help(update, context):
     """Send a message when the command /help is issued."""
-    keyboard = [['/doge', '/cat', '/help']]
+    keyboard = [['/meme 😂'], ['/doge 🐶', '/cat 🐱'],
+                ['/dog_fact 🐕', '/cat_fact 🐈'], ['/help ❓']]
     reply_markup = ReplyKeyboardMarkup(
         keyboard, resize_keyboard=True, selective=True)
     update.message.reply_text(
-        'Use /doge or /cat for a surprise.', reply_markup=reply_markup)
+        'Use /meme for a meme. \nUse /doge or /cat for a picture. \nUse /dog_fact or /cat_fact for a fact.', reply_markup=reply_markup)
 
 
 def echo(update, context):
@@ -70,10 +72,14 @@ def doge(update, context):
 
 def get_cat_url():
     """Get random cat url from json"""
+    # contents = requests.get(
+    #     'https://api.thecatapi.com/v1/images/search').json()
+    # contents = contents[0]
+    # url = contents['url']
+    # return url
     contents = requests.get(
-        'https://api.thecatapi.com/v1/images/search').json()
-    contents = contents[0]
-    url = contents['url']
+        'http://aws.random.cat/meow').json()
+    url = contents['file']
     return url
 
 
@@ -95,6 +101,42 @@ def cat(update, context):
     context.bot.send_photo(chat_id=chat_id, photo=url)
 
 
+def get_cat_fact():
+    json = requests.get('https://catfact.ninja/fact').json()
+    fact = json['fact']
+    return fact
+
+
+def cat_fact(update, context):
+    fact = get_cat_fact()
+    context.bot.send_message(chat_id=update.effective_chat.id, text=fact)
+
+
+def get_dog_fact():
+    json = requests.get('https://some-random-api.ml/facts/dog').json()
+    fact = json['fact']
+    return fact
+
+
+def dog_fact(update, context):
+    fact = get_dog_fact()
+    context.bot.send_message(chat_id=update.effective_chat.id, text=fact)
+
+
+def get_meme_contents():
+    contents = requests.get('https://meme-api.herokuapp.com/gimme').json()
+    return contents
+
+
+def meme(update, context):
+    contents = get_meme_contents()
+    caption = contents['title']
+    image = image = contents['url']
+    chat_id = update.message.chat_id
+    context.bot.send_photo(chat_id=chat_id, photo=image)
+    context.bot.send_message(chat_id=update.effective_chat.id, text=caption)
+
+
 def main():
     """Start the bot."""
     # Create the Updater and pass it your bot's token.
@@ -111,6 +153,9 @@ def main():
     dp.add_handler(CommandHandler("help", help))
     dp.add_handler(CommandHandler("doge", doge))
     dp.add_handler(CommandHandler("cat", cat))
+    dp.add_handler(CommandHandler("dog_fact", dog_fact))
+    dp.add_handler(CommandHandler("cat_fact", cat_fact))
+    dp.add_handler(CommandHandler("meme", meme))
 
     # on noncommand i.e message - echo the message on Telegram
     dp.add_handler(MessageHandler(Filters.text, echo))

@@ -1,0 +1,8 @@
+Commands
+start - Start bot
+meme - Random meme
+doge - Random dog picture
+cat - Random cat picture
+dog_fact - Random dog fact
+cat_fact - Random cat fact
+help - View help
